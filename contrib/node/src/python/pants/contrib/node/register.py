@@ -12,11 +12,13 @@ from pants.contrib.node.subsystems.resolvers.node_preinstalled_module_resolver i
   NodePreinstalledModuleResolver
 from pants.contrib.node.subsystems.resolvers.npm_resolver import NpmResolver
 from pants.contrib.node.targets.node_bundle import NodeBundle
+from pants.contrib.node.targets.node_karma_tests import NodeKarmaTests
 from pants.contrib.node.targets.node_module import NodeModule
 from pants.contrib.node.targets.node_preinstalled_module import NodePreinstalledModule
 from pants.contrib.node.targets.node_remote_module import NodeRemoteModule
 from pants.contrib.node.targets.node_test import NodeTest as NodeTestTarget
 from pants.contrib.node.tasks.node_build import NodeBuild
+from pants.contrib.node.tasks.node_karma_tests_runner import NodeKarmaTestsRunner
 from pants.contrib.node.tasks.node_bundle import NodeBundle as NodeBundleTask
 from pants.contrib.node.tasks.node_repl import NodeRepl
 from pants.contrib.node.tasks.node_resolve import NodeResolve
@@ -28,6 +30,7 @@ def build_file_aliases():
   return BuildFileAliases(
     targets={
       'node_bundle': NodeBundle,
+      'node_karma_tests': NodeKarmaTests,
       'node_module': NodeModule,
       'node_preinstalled_module': NodePreinstalledModule,
       'node_remote_module': NodeRemoteModule,
@@ -43,6 +46,7 @@ def register_goals():
   task(name='node', action=NodeBuild).install('compile', first=True)
   task(name='node', action=NodeTestTask).install('test')
   task(name='node', action=NodeBundleTask).install('bundle')
+  task(name='karma', action=NodeKarmaTestsRunner).install('test')
 
 
 def global_subsystems():

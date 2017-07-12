@@ -104,3 +104,11 @@ python_library(
     'src/python/pants/util:process_handler',
   ]
 )
+
+python_library(
+  name='node_karma_tests_runner',
+  sources=['node_karma_tests_runner.py'],
+  dependencies=[
+    ':node_test',
+  ]
+)

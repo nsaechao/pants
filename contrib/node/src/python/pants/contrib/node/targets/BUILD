@@ -68,3 +68,13 @@ python_library(
     'src/python/pants/build_graph',
   ]
 )
+
+python_library(
+  name='node_karma_tests',
+  sources=['node_karma_tests.py'],
+  dependencies=[
+    'src/python/pants/base:payload',
+    'src/python/pants/base:payload_field',
+    'src/python/pants/build_graph',
+  ]
+)

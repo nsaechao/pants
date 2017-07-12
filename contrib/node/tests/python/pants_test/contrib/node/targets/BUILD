@@ -18,3 +18,12 @@ python_tests(
     'tests/python/pants_test:base_test'
   ]
 )
+
+python_tests(
+  name='node_karma_tests',
+  sources=['test_node_karma_tests.py'],
+  dependencies=[
+    'contrib/node/src/python/pants/contrib/node/targets:node_karma_tests',
+    'tests/python/pants_test:base_test'
+  ]
+)

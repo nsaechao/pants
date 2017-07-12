@@ -127,3 +127,22 @@ python_tests(
     'tests/python/pants_test/tasks:task_test_base',
   ]
 )
+
+python_tests(
+  name='node_karma_tests_runner',
+  sources=['test_node_karma_tests_runner.py'],
+  dependencies=[
+    '3rdparty/python:mock',
+    'contrib/node/src/python/pants/contrib/node/targets:node_karma_tests',
+    'contrib/node/src/python/pants/contrib/node/targets:node_module',
+    'contrib/node/src/python/pants/contrib/node/targets:node_test',
+    'contrib/node/src/python/pants/contrib/node/tasks:node_paths',
+    'contrib/node/src/python/pants/contrib/node/tasks:node_resolve',
+    'contrib/node/src/python/pants/contrib/node/tasks:node_test',
+    'contrib/node/src/python/pants/contrib/node/tasks:node_karma_tests_runner',
+    'contrib/node/src/python/pants/contrib/node/subsystems/resolvers:npm_resolver',
+    'src/python/pants/base:exceptions',
+    'src/python/pants/util:timeout',
+    'tests/python/pants_test/tasks:task_test_base',
+  ]
+)
