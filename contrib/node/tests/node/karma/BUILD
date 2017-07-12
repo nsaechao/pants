@@ -1,11 +1,11 @@
 node_module(
   name='karma',
   sources=globs(
-  	'package.json',
-  	'yarn.lock',
-  	'test/*.js',
-  	'test/spec/*.js',
-  	'karma.conf.js'),
+    'package.json',
+    'yarn.lock',
+    'test/*.js',
+    'test/spec/*.js',
+    'karma.conf.js'),
   package_manager='yarn',
 )
 

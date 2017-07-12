@@ -35,7 +35,7 @@ class NodeKarmaTests(Target):
   @property
   def config(self):
     """ The karma config file for driving the karma CLI
-    
+
     :rtype: string
     """
     return self.payload.config
@@ -43,7 +43,7 @@ class NodeKarmaTests(Target):
   @property
   def karma_bin(self):
     """ The bin location for the karma CLI
-    
+
     :rtype: string
     """
     return self.payload.karma_bin

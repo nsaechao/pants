@@ -47,7 +47,7 @@ class NodeKarmaTestsTest(TaskTestBase):
       config=self.config,
       dependencies=node_dependencies
     )
-    
+
     context = self.context(target_roots=[target], passthru_args=self.passthru_args)
     node_module_target = node_dependencies[0]
     # Fake resolving so self.context.products.get_data(NodePaths) is populated for NodeTestTask.
@@ -77,7 +77,7 @@ class NodeKarmaTestsTest(TaskTestBase):
       task.execute()
 
   def test_execute_run_execute_node_success_return_code(self):
-    task = self._create_task(dependencies=[]) 
+    task = self._create_task(dependencies=[])
     task.execute_node = Mock()
     task.execute_node.return_value = [0, 'Success']
     call_args = [

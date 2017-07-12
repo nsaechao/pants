@@ -31,7 +31,7 @@ class NodeKarmaTestsRunner(NodeTest):
       yield s.getsockname()[1]
     except socket.error as e:
       raise TaskError('Exception assigning ephemeral port: {!r}'.format(e))
-    finally: 
+    finally:
       s.close()
 
   def _execute(self, all_targets):
@@ -57,13 +57,13 @@ class NodeKarmaTestsRunner(NodeTest):
         if result != 0:
           raise TaskError('\t{} failed with exit code {}'.format(node_run, result))
 
-    # Inherit feature from NodeTest task -- which is essentially used to 
+    # Inherit feature from NodeTest task -- which is essentially used to
     # override the _spawn_and_wait method for retrieving which targets are being run.
     self._currently_executing_test_targets = []
-  
+
   def _test_target_filter(self):
     """Overrides NodeTest._test_target_filter to filter only NodeKarmaTests."""
     def target_filter(target):
       return isinstance(target, NodeKarmaTests)
-    
+
     return target_filter
