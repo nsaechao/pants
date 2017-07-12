@@ -1,0 +1,20 @@
+{
+  "name": "karma",
+  "version": "1.0.0",
+  "description": "Tests covering the node_karma_tests pants target",
+  "main": "index.js",
+  "dependencies": {
+    "jasmine-core": "^2.6.4",
+    "karma": "^1.7.0",
+    "process": "^0.11.10",
+    "requirejs": "^2.3.3"
+  },
+  "devDependencies": {
+    "karma-jasmine": "^1.1.0",
+    "karma-phantomjs-launcher": "^1.0.4",
+    "karma-requirejs": "^1.1.0"
+  },
+  "scripts": {
+    "test": "karma start --single-run"
+  }
+}
