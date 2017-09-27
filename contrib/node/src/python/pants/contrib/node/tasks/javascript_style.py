@@ -9,13 +9,12 @@ import os
 
 from pants.base.build_environment import get_buildroot
 from pants.base.exceptions import TaskError
-from pants.base.workunit import WorkUnit, WorkUnitLabel
-from pants.contrib.node.targets.node_package import NodePackage
-from pants.contrib.node.tasks.node_task import NodeTask
-from pants.contrib.node.tasks.node_paths import NodePaths
-from pants.option.custom_types import file_option
+from pants.base.workunit import WorkUnitLabel
 from pants.util.contextutil import pushd
 from pants.util.memo import memoized_method
+
+from pants.contrib.node.targets.node_package import NodePackage
+from pants.contrib.node.tasks.node_task import NodeTask
 
 
 class JavascriptStyle(NodeTask):
@@ -39,6 +38,9 @@ class JavascriptStyle(NodeTask):
              help='Check all targets and present the full list of errors.')
     register('--javascriptstyle-dir', advanced=True, fingerprint=True,
              help='Package directory for lint tool.')
+    register('--transitive', type=bool, default=True,
+             help='True to run the tool transitively on targets in the context, false to run '
+                  'for only roots specified on the commandline.')
 
   def get_lintable_node_targets(self, targets):
     return filter(
@@ -55,9 +57,25 @@ class JavascriptStyle(NodeTask):
                        source.endswith(self._JSX_SOURCE_EXTENSION)))
     return sources
 
+  def _is_javascriptstyle_dir_valid(self, javascriptstyle_dir):
+    dir_exists = os.path.isdir(javascriptstyle_dir)
+    if not dir_exists:
+      raise TaskError(
+        'javascriptstyle package does not exist: {}.'.format(javascriptstyle_dir))
+      return False
+    else:
+      lock_file = os.path.join(javascriptstyle_dir, 'yarn.lock')
+      package_json = os.path.join(javascriptstyle_dir, 'package.json')
+      files_exist = os.path.isfile(lock_file) and os.path.isfile(package_json)
+      if not files_exist:
+        raise TaskError(
+          'javascriptstyle cannot be installed because yarn.lock '
+          'or package.json does not exist.')
+        return False
+    return True
+
   @memoized_method
-  def _install_javascriptstyle(self):
-    javascriptstyle_dir = self.get_options().javascriptstyle_dir
+  def _install_javascriptstyle(self, javascriptstyle_dir):
     with pushd(javascriptstyle_dir):
       result, yarn_add_command = self.execute_yarnpkg(
         args=['install'],
@@ -89,12 +107,30 @@ class JavascriptStyle(NodeTask):
       self.context.log.info('Skipping javascript style check.')
       return
 
-    targets = self.get_lintable_node_targets(self.context.targets())
+    all_targets = self.context.targets() if self.get_options().transitive else self.context.target_roots
+    targets = self.get_lintable_node_targets(all_targets)
     if not targets:
       return
     failed_targets = []
 
-    javascriptstyle_bin_path = self._install_javascriptstyle()
+    # TODO: If javascriptstyle is not configured, pants should use a default installation.
+    # Some concerns and thoughts regarding the current javascriptstyle implementation:
+    # 1.) The javascriptstyle package itself is designed to be mutable. That is problematic
+    #     as there can be many changes in the same package version across multiple installations.
+    #     Pushing updates to the original package will feel more like a major revision.
+    # 2.) The decision was made to ensure deterministic installation using yarn.lock file. The lock
+    #     file is produced after an installation. And all eslint plugins need to be final and
+    #     explicit during installation time.
+    # 3.) We can potentially solve this using a caching solution for yarn.lock/package.json files.
+    #     That is, javascriptstyle package should only include base eslint + rules and all plugins
+    #     and additional rules should be configured through pants.ini.
+    javascriptstyle_dir = self.get_options().javascriptstyle_dir
+    if not (javascriptstyle_dir and self._is_javascriptstyle_dir_valid(javascriptstyle_dir)):
+      self.context.log.warn('javascriptstyle is not configured, skipping javascript style check.')
+      self.context.log.warn('See https://github.com/pantsbuild/pants/tree/master/build-support/javascriptstyle/README.md')
+      return
+
+    javascriptstyle_bin_path = self._install_javascriptstyle(javascriptstyle_dir)
     for target in targets:
       files = self.get_javascript_sources(target)
       if files:

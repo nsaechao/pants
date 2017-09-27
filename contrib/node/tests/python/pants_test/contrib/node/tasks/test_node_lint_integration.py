@@ -8,7 +8,7 @@ from __future__ import (absolute_import, division, generators, nested_scopes, pr
 from pants_test.pants_run_integration_test import PantsRunIntegrationTest
 
 
-class NodeRunIntegrationTest(PantsRunIntegrationTest):
+class NodeLintIntegrationTest(PantsRunIntegrationTest):
 
   def test_lint_success(self):
     command = ['lint',
@@ -16,10 +16,3 @@ class NodeRunIntegrationTest(PantsRunIntegrationTest):
     pants_run = self.run_pants(command=command)
 
     self.assert_success(pants_run)
-
-  def test_lint_failure(self):
-    command = ['lint',
-               'contrib/node/exaamples/src/node/hello-test::']
-    pants_run = self.run_pants(command=command)
-
-    self.assert_failure(pants_run)
